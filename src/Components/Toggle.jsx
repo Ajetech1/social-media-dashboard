@@ -22,7 +22,7 @@ const ToggleLabel = styled.span`
   left: 700px;
 
   @media (max-width: 768px) {
-    margin-top: 70px;
+    margin-top: 60px;
     left: 23px;
     position: absolute;
   }
@@ -39,8 +39,13 @@ const ToggleButton = styled.div`
   transition: background 0.3s;
 
   @media (max-width: 768px) {
-    margin-top: 70px;
+    margin-top: 60px;
     left: 280px;
+  }
+
+  @media (max-width: 360px) {
+    margin-top: 60px;
+    left: 260px;
   }
 `;
 
@@ -69,6 +74,10 @@ const Header = styled.div`
     font-size: 16px;
     left: 12px;
   }
+
+  @media (max-width: 360px) {
+    font-size: 13px;
+  }
 `;
 
 const Paragraph = styled.p`
@@ -79,12 +88,17 @@ const Paragraph = styled.p`
   font-size: 16px;
   position: relative;
   right: 650px;
-  margin-top: 10px;
 
   @media (max-width: 768px) {
     font-size: 10px;
     text-align: left;
     right: 196px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 10px;
+    text-align: left;
+    right: 160px;
   }
 `;
 
