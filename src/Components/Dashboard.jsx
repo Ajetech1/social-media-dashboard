@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-import facebook from "../assets/images/icon-facebook.svg";
-import twitter from "../assets/images/icon-twitter.svg";
-import instagram from "../assets/images/icon-instagram.svg";
-import youtube from "../assets/images/icon-youtube.svg";
+import facebookIcon from "../assets/images/icon-facebook.svg";
+import twitterIcon from "../assets/images/icon-twitter.svg";
+import instagramIcon from "../assets/images/icon-instagram.svg";
+import youtubeIcon from "../assets/images/icon-youtube.svg";
 
 const DashboardWrapper = styled.div`
   display: flex;
@@ -13,58 +13,100 @@ const DashboardWrapper = styled.div`
   width: 100%;
 `;
 
-const data = [
-  {
-    title: (
-      <>
-        <img src={facebook} alt="" /> @nathanf
-      </>
-    ),
-    count: "1987",
-    paragraph: "F O L L O W E R S",
-    change: "+12 Today",
-    isPositive: true,
-    borderColor: "#1c79cf",
-  },
-  {
-    title: (
-      <>
-        <img src={twitter} alt="" /> @nathanf
-      </>
-    ),
-    count: "1044",
-    paragraph: "F O L L O W E R S",
-    change: "+99 Today",
-    isPositive: true,
-    borderColor: "#1c79cf",
-  },
-  {
-    title: (
-      <>
-        <img src={instagram} alt="" /> @realnathanf
-      </>
-    ),
-    count: "11k",
-    paragraph: "F O L L O W E R S",
-    change: "+1099 Today",
-    isPositive: true,
-    borderColor: "#c06174",
-  },
-  {
-    title: (
-      <>
-        <img src={youtube} alt="" /> @Nathan F.
-      </>
-    ),
-    count: "8239",
-    paragraph: "S U B S C R I B E R S",
-    change: "-144 Today",
-    isPositive: false,
-    borderColor: "#a4082c",
-  },
-];
-
 const Dashboard = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [youtubeRes, twitterRes, facebookRes, instagramRes] =
+          await Promise.all([
+            fetch("/api/youtube").then((res) => res.json()),
+            fetch("/api/twitter").then((res) => res.json()),
+            fetch("/api/facebook").then((res) => res.json()),
+            fetch("/api/instagram").then((res) => res.json()),
+          ]);
+
+        const updatedData = [
+          {
+            title: (
+              <>
+                <img
+                  src={facebookIcon}
+                  alt="Facebook"
+                  style={{ marginRight: "4px", verticalAlign: "middle" }}
+                />{" "}
+                @{facebookRes.name || "Ajetech Kidz Coding Club"}
+              </>
+            ),
+            count: facebookRes.followers_count || "0",
+            paragraph: "FOLLOWERS",
+            change: "+8 Today", // this can be replace with dynamic change if stored historically
+            isPositive: true,
+            borderColor: "#1c79cf",
+          },
+          {
+            title: (
+              <>
+                <img
+                  src={twitterIcon}
+                  alt="Twitter"
+                  style={{ marginRight: "4px", verticalAlign: "middle" }}
+                />{" "}
+                @{twitterRes.data?.username || "Ajetech"}
+              </>
+            ),
+            count: twitterRes.data?.public_metrics?.followers_count || "0",
+            paragraph: "FOLLOWERS",
+            change: "+10 Today",
+            isPositive: true,
+            borderColor: "#1c79cf",
+          },
+          {
+            title: (
+              <>
+                <img
+                  src={instagramIcon}
+                  alt="Instagram"
+                  style={{ marginRight: "4px", verticalAlign: "middle" }}
+                />{" "}
+                @{instagramRes.username || "Ajetech_it_solutions"}
+              </>
+            ),
+            count: instagramRes.followers_count || "0",
+            paragraph: "FOLLOWERS",
+            change: "+5 Today",
+            isPositive: true,
+            borderColor: "#c06174",
+          },
+          {
+            title: (
+              <>
+                <img
+                  src={youtubeIcon}
+                  alt="YouTube"
+                  style={{ marginRight: "4px", verticalAlign: "middle" }}
+                />{" "}
+                @Ajetechsolutions
+              </>
+            ),
+            count: youtubeRes.items?.[0]?.statistics?.subscriberCount || "0",
+            paragraph: "SUBSCRIBERS",
+            change: "+3 Today",
+            isPositive: true,
+            borderColor: "#a4082c",
+          },
+        ];
+
+        setData(updatedData);
+      } catch (error) {
+        console.error("Error fetching social media data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <DashboardWrapper>
       {data.map((item, index) => (

@@ -17,13 +17,13 @@ const CardWrapper = styled.div`
 `;
 
 const Title = styled.h3`
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 10px;
-  margin-left: 10px;
+  margin-left: 0px;
   color: #8a92b9;
   display: flex;
   position: relative;
-  left: 50px;
+  left: 10px;
 `;
 
 const Count = styled.div`

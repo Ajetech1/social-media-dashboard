@@ -1,5 +1,4 @@
-// CardComponent.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import facebookIcon from "../assets/images/icon-facebook.svg";
 import twitterIcon from "../assets/images/icon-twitter.svg";
@@ -16,6 +15,7 @@ const DashboardWrapper = styled.div`
 const Card = styled.div`
   background: ${(props) => props.theme.cardBg};
   color: ${(props) => props.theme.cardText};
+  border-color: ${(props) => props.borderColor};
   border-radius: 10px;
   padding: 20px;
   flex: 1 1 200px;
@@ -26,6 +26,10 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+
+  @media (max-width: 768px) {
+    width: 260px;
+  }
 `;
 
 const Title = styled.h3`
@@ -55,87 +59,101 @@ const Icon = styled.div`
 `;
 
 const CardComponent = () => {
-  const data = [
-    {
-      title: "Page Views",
-      value: 87,
-      change: "3%",
-      positive: true,
-      platform: "facebook",
-    },
-    {
-      title: "Likes",
-      value: 52,
-      change: "-2%",
-      positive: false,
-      platform: "facebook",
-    },
-    {
-      title: "Likes",
-      value: 5462,
-      change: "2257%",
-      positive: true,
-      platform: "instagram",
-    },
-    {
-      title: "Profile Views",
-      value: "52k",
-      change: "1375%",
-      positive: true,
-      platform: "instagram",
-    },
-    {
-      title: "Retweets",
-      value: 117,
-      change: "303%",
-      positive: true,
-      platform: "twitter",
-    },
-    {
-      title: "Likes",
-      value: 507,
-      change: "553%",
-      positive: true,
-      platform: "twitter",
-    },
-    {
-      title: "Likes",
-      value: 107,
-      change: "-19%",
-      positive: false,
-      platform: "youtube",
-    },
-    {
-      title: "Total Views",
-      value: 1407,
-      change: "-12%",
-      positive: false,
-      platform: "youtube",
-    },
-  ];
+  const [data, setData] = useState([]);
 
   const platformIcons = {
-    facebook: (
-      <>
-        <img src={facebookIcon} alt="" />
-      </>
-    ),
-    instagram: (
-      <>
-        <img src={instagramIcon} alt="" />
-      </>
-    ),
-    twitter: (
-      <>
-        <img src={twitterIcon} alt="" />
-      </>
-    ),
-    youtube: (
-      <>
-        <img src={youtubeIcon} alt="" />
-      </>
-    ),
+    facebook: <img src={facebookIcon} alt="Facebook" />,
+    instagram: <img src={instagramIcon} alt="Instagram" />,
+    twitter: <img src={twitterIcon} alt="Twitter" />,
+    youtube: <img src={youtubeIcon} alt="YouTube" />,
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [youtubeRes, twitterRes, facebookRes, instagramRes] =
+          await Promise.all([
+            fetch("/api/youtube").then((res) => res.json()),
+            fetch("/api/twitter").then((res) => res.json()),
+            fetch("/api/facebook").then((res) => res.json()),
+            fetch("/api/instagram").then((res) => res.json()),
+          ]);
+
+        const updatedData = [
+          // Facebook metrics
+          {
+            title: "Followers",
+            value: facebookRes.followers_count || "0",
+            change: "3%",
+            positive: true,
+            platform: "facebook",
+          },
+          {
+            title: "Likes",
+            value: facebookRes.fan_count || "0",
+            change: "-2%",
+            positive: false,
+            platform: "facebook",
+          },
+
+          // Instagram Followers
+          {
+            title: "Followers",
+            value: instagramRes.followers_count || "0",
+            change: "+3",
+            isPositive: true,
+            platform: "instagram",
+          },
+
+          // Instagram Posts (Media Count)
+          {
+            title: "Media Count",
+            value: instagramRes.media_count || "0",
+            change: "+5",
+            isPositive: true,
+            platform: "instagram",
+          },
+
+          // Twitter metrics
+          {
+            title: "Tweets",
+            value: twitterRes.data?.public_metrics?.tweet_count || "0",
+            change: "+0%", // placeholder
+            positive: true,
+            platform: "twitter",
+          },
+          {
+            title: "Likes",
+            value: twitterRes.data?.public_metrics?.like_count || "0",
+            change: "+0%",
+            positive: true,
+            platform: "twitter",
+          },
+          // YouTube metrics
+          {
+            title: "Subscribers",
+            value: youtubeRes.items?.[0]?.statistics?.subscriberCount || "0",
+            change: "+0%",
+            positive: true,
+            platform: "youtube",
+          },
+          {
+            title: "Total Views",
+            value: youtubeRes.items?.[0]?.statistics?.viewCount || "0",
+            change: "-0%",
+            positive: false,
+            platform: "youtube",
+          },
+        ];
+
+        setData(updatedData);
+      } catch (error) {
+        console.error("Error fetching social media overview data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <DashboardWrapper>
@@ -145,6 +163,7 @@ const CardComponent = () => {
           <Title>{item.title}</Title>
           <Value>{item.value}</Value>
           <Change positive={item.positive}>{item.change}</Change>
+          <borderColor>{item.borderColor}</borderColor>
         </Card>
       ))}
     </DashboardWrapper>
