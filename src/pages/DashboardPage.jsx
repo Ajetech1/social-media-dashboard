@@ -7,6 +7,7 @@ import styled, {
 import Dashboard from "../Components/Dashboard";
 import Toggle from "../Components/Toggle";
 import OverviewCard from "../Components/OverviewCard";
+import { toast } from "react-toastify";
 import "../App.css";
 
 const GlobalStyle = createGlobalStyle`
@@ -106,17 +107,45 @@ function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("Not authorized, no token");
+          return;
+        }
+
+        const res = await fetch(
+          "https://social-media-dashboard-t33n.onrender.com/api/admin/dashboard",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.status === 401) {
+          const data = await res.json();
+          toast.error(data.message || "Unauthorized");
+          return;
+        }
+
         await Promise.all([
-          fetch("/api/followers"),
-          fetch("/api/youtube"),
-          fetch("/api/twitter"),
-          fetch("/api/facebook"),
-          fetch("/api/instagram"),
+          fetch("/api/followers", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/youtube", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/twitter", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/facebook", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/instagram", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
       } catch (error) {
-        console.error("API fetch error:", error);
+        toast.error("API fetch error, please try again");
       } finally {
-        // Delay slightly for smooth fade
         setTimeout(() => setLoading(false), 300);
       }
     };

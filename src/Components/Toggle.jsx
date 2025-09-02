@@ -19,7 +19,7 @@ const ToggleLabel = styled.span`
   position: relative;
   right: 180px;
   transition: color 0.3s;
-  left: 700px;
+  left: 690px;
 
   @media (max-width: 768px) {
     margin-top: 60px;
@@ -35,7 +35,7 @@ const ToggleButton = styled.div`
   background: ${(props) => (props.isDarkMode ? "#3ec0a5" : "#ccc")};
   position: absolute;
   display: flex;
-  left: 800px;
+  left: 790px;
   transition: background 0.3s;
 
   @media (max-width: 768px) {
@@ -103,9 +103,65 @@ const Paragraph = styled.p`
   }
 `;
 
+/* ✅ Welcome Message */
+const WelcomeMessage = styled.span`
+  font-size: 14px;
+  color: ${(props) => (props.isDarkMode ? "white" : "black")};
+  font-weight: 600;
+  position: absolute;
+  display: flex;
+  left: 200px;
+  margin-top: 25px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    margin-top: 100px;
+    left: 50px;
+  }
+`;
+
+/* ✅ Styled Logout Button */
+const LogoutButton = styled.button`
+  padding: 5px 10px;
+  position: absolute;
+  display: flex;
+  left: 770px;
+  margin-top: 28px;
+  background: ${(props) => (props.isDarkMode ? "#e74c3c" : "#3498db")};
+  color: white;
+  font-size: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${(props) => (props.isDarkMode ? "#c0392b" : "#2980b9")};
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    margin-top: 10px;
+    left: 260px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 12px;
+    padding: 8px 14px;
+    margin-top: 60px;
+    left: 260px;
+  }
+`;
+
 const Toggle = ({ isDarkMode, toggleTheme }) => {
   const [totalFollowers, setTotalFollowers] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [welcome, setWelcome] = useState("");
 
   useEffect(() => {
     const fetchFollowers = async () => {
@@ -113,6 +169,22 @@ const Toggle = ({ isDarkMode, toggleTheme }) => {
         const res = await fetch("/api/followers");
         const data = await res.json();
         setTotalFollowers(data.total);
+
+        // ✅ fetch welcome message (protected)
+        const token = localStorage.getItem("token");
+        if (token) {
+          const dashRes = await fetch(
+            "https://social-media-dashboard-t33n.onrender.com/api/admin/dashboard",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (dashRes.ok) {
+            const dashData = await dashRes.json();
+            setWelcome(dashData.message);
+          }
+        }
       } catch (error) {
         console.error("Error fetching followers:", error);
       } finally {
@@ -140,6 +212,22 @@ const Toggle = ({ isDarkMode, toggleTheme }) => {
           ? "Loading followers..."
           : `Total Followers: ${totalFollowers?.toLocaleString()}`}
       </Paragraph>
+
+      {/* ✅ Welcome Message in front of Logout */}
+      {welcome && (
+        <WelcomeMessage isDarkMode={isDarkMode}>{welcome}</WelcomeMessage>
+      )}
+
+      {/* ✅ Styled Logout Button */}
+      <LogoutButton
+        isDarkMode={isDarkMode}
+        onClick={() => {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }}
+      >
+        Logout
+      </LogoutButton>
     </ToggleWrapper>
   );
 };

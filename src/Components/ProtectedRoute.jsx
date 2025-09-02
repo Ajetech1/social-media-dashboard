@@ -1,14 +1,22 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
-
-export default function ProtectedRoute({ children }) {
+const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    // 🚫 Not logged in → redirect to login
-    return <Navigate to="/login" replace />;
+    // 👉 Pass message via state
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          fromProtected: true,
+          message: "Not authorized, please log in.",
+        }}
+      />
+    );
   }
 
-  // ✅ Logged in → allow access
   return children;
-}
+};
+
+export default ProtectedRoute;

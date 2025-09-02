@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../assets/css/auth.css";
+import { toast } from "react-toastify";
 import SocialIcon from "../assets/images/social-media-icons.jpg";
 
 export default function Login() {
@@ -10,6 +11,16 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 👉 Show toast if redirected from ProtectedRoute
+  useEffect(() => {
+    if (location.state?.fromProtected) {
+      toast.error(location.state.message || "Please log in first");
+      // clear state so it doesn’t show again if user reloads
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,21 +40,27 @@ export default function Login() {
       );
 
       if (!response.ok) {
-        throw new Error("Invalid username or password");
+        // throw new Error("Invalid username or password");
+        toast.error("Invalid username or password");
+        return;
       }
 
       const data = await response.json();
       console.log("Login successful:", data);
 
-      // ✅ Save token
+      // Save token
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
 
-      // ✅ Redirect to dashboard
+      // Show success toast
+      toast.success(data.message || "Login successful");
+
+      // Redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
+      toast.error(err.message); // 🔴 show error toast
     } finally {
       setLoading(false);
     }
