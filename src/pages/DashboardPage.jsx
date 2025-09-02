@@ -1,153 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import styled, {
-//   ThemeProvider,
-//   createGlobalStyle,
-//   keyframes,
-// } from "styled-components";
-// import Dashboard from "../Components/Dashboard";
-// import Toggle from "../Components/Toggle";
-// import OverviewCard from "../Components/OverviewCard";
-// import "../App.css";
-
-// const GlobalStyle = createGlobalStyle`
-//   body {
-//     background-color: ${(props) => props.theme.body};
-//     color: ${(props) => props.theme.text};
-//     transition: all 0.3s;
-//   }
-// `;
-
-// const lightTheme = {
-//   body: "#fff",
-//   text: "#000",
-//   cardBg: "#f0f0f0",
-//   cardText: "#000",
-//   accent: "#3498db", // Blue for light mode
-// };
-
-// const darkTheme = {
-//   body: "#121212",
-//   text: "#fff",
-//   cardBg: "#1e1e2f",
-//   cardText: "#fff",
-//   accent: "#f1c40f", // Yellow for dark mode
-// };
-
-// const AppWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   min-height: 100vh;
-//   padding: 20px;
-//   opacity: ${(props) => (props.visible ? 1 : 0)};
-//   transition: opacity 0.8s ease-in-out;
-// `;
-
-// const HeaderText = styled.h1`
-//   text-align: left;
-//   color: ${(props) => props.theme.text};
-//   font-size: 20px;
-
-//   @media (max-width: 768px) {
-//     text-align: left;
-//     font-size: 1.2rem;
-//   }
-// `;
-
-// const SpinnerWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column; /* Stack spinner and text vertically */
-//   justify-content: center;
-//   align-items: center;
-//   height: 100vh;
-//   width: 100vw;
-// `;
-
-// const Spinner = styled.div`
-//   border: 6px solid rgba(0, 0, 0, 0.1);
-//   border-top: 6px solid ${(props) => props.theme.accent};
-//   border-radius: 50%;
-//   width: 60px;
-//   height: 60px;
-//   animation: spin 1s linear infinite;
-
-//   @keyframes spin {
-//     0% {
-//       transform: rotate(0deg);
-//     }
-//     100% {
-//       transform: rotate(360deg);
-//     }
-//   }
-// `;
-
-// // Fade/pulse animation for loading text
-// const pulse = keyframes`
-//   0% { opacity: 0.3; }
-//   50% { opacity: 1; }
-//   100% { opacity: 0.3; }
-// `;
-
-// const SpinnerText = styled.p`
-//   margin-top: 20px;
-//   font-size: 1.2rem;
-//   color: ${(props) => props.theme.text};
-//   animation: ${pulse} 1.5s infinite;
-// `;
-
-// function DashboardPage() {
-//   const [isDarkMode, setIsDarkMode] = useState(true);
-//   const [loading, setLoading] = useState(true);
-
-//   const toggleTheme = () => {
-//     setIsDarkMode(!isDarkMode);
-//   };
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         await Promise.all([
-//           fetch("/api/followers"),
-//           fetch("/api/youtube"),
-//           fetch("/api/twitter"),
-//           fetch("/api/facebook"),
-//           fetch("/api/instagram"),
-//         ]);
-//       } catch (error) {
-//         console.error("API fetch error:", error);
-//       } finally {
-//         // Delay slightly for smooth fade
-//         setTimeout(() => setLoading(false), 300);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   return (
-//     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-//       <GlobalStyle />
-//       {loading ? (
-//         <SpinnerWrapper>
-//           <Spinner />
-//           <SpinnerText>Loading your dashboard...</SpinnerText>
-//         </SpinnerWrapper>
-//       ) : (
-//         <AppWrapper visible={!loading}>
-//           <Toggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-//           <Dashboard />
-//           <div className="Overview">
-//             <HeaderText>Overview - Today</HeaderText>
-//           </div>
-//           <OverviewCard />
-//         </AppWrapper>
-//       )}
-//     </ThemeProvider>
-//   );
-// }
-
-// export default DashboardPage;
-
 import React, { useState, useEffect } from "react";
 import styled, {
   ThemeProvider,
@@ -172,7 +22,7 @@ const lightTheme = {
   text: "#000",
   cardBg: "#f0f0f0",
   cardText: "#000",
-  accent: "#3498db",
+  accent: "#3498db", // Blue for light mode
 };
 
 const darkTheme = {
@@ -180,7 +30,7 @@ const darkTheme = {
   text: "#fff",
   cardBg: "#1e1e2f",
   cardText: "#fff",
-  accent: "#f1c40f",
+  accent: "#f1c40f", // Yellow for dark mode
 };
 
 const AppWrapper = styled.div`
@@ -206,7 +56,7 @@ const HeaderText = styled.h1`
 
 const SpinnerWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack spinner and text vertically */
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -231,6 +81,7 @@ const Spinner = styled.div`
   }
 `;
 
+// Fade/pulse animation for loading text
 const pulse = keyframes`
   0% { opacity: 0.3; }
   50% { opacity: 1; }
@@ -247,8 +98,6 @@ const SpinnerText = styled.p`
 function DashboardPage() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState(null);
-  const [socialData, setSocialData] = useState({}); // holds followers, youtube, twitter, facebook, instagram
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -257,59 +106,17 @@ function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1️⃣ Protected dashboard API
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          console.error("No token found. Redirecting to login...");
-          window.location.href = "/login";
-          return;
-        }
-
-        const dashboardRes = await fetch(
-          "https://social-media-dashboard-t33n.onrender.com/api/admin/dashboard",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // ✅ Protected route
-            },
-          }
-        );
-
-        if (!dashboardRes.ok) {
-          throw new Error("Unauthorized or invalid token");
-        }
-
-        const dashboardJson = await dashboardRes.json();
-        setDashboardData(dashboardJson);
-
-        // 2️⃣ Public APIs (No Auth needed)
-        const endpoints = [
-          "/api/followers",
-          "/api/youtube",
-          "/api/twitter",
-          "/api/facebook",
-          "/api/instagram",
-        ];
-
-        const results = await Promise.all(
-          endpoints.map((url) =>
-            fetch(
-              `https://social-media-dashboard-t33n.onrender.com${url}`
-            ).then((res) => res.json())
-          )
-        );
-
-        setSocialData({
-          followers: results[0],
-          youtube: results[1],
-          twitter: results[2],
-          facebook: results[3],
-          instagram: results[4],
-        });
+        await Promise.all([
+          fetch("/api/followers"),
+          fetch("/api/youtube"),
+          fetch("/api/twitter"),
+          fetch("/api/facebook"),
+          fetch("/api/instagram"),
+        ]);
       } catch (error) {
         console.error("API fetch error:", error);
-        window.location.href = "/login"; // Redirect if auth fails
       } finally {
+        // Delay slightly for smooth fade
         setTimeout(() => setLoading(false), 300);
       }
     };
@@ -328,17 +135,11 @@ function DashboardPage() {
       ) : (
         <AppWrapper visible={!loading}>
           <Toggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-          <Dashboard data={dashboardData} />
+          <Dashboard />
           <div className="Overview">
             <HeaderText>Overview - Today</HeaderText>
           </div>
           <OverviewCard />
-
-          {/* Show public API responses for testing */}
-          <div style={{ marginTop: "20px", textAlign: "left", width: "100%" }}>
-            <h3>Social Media Stats</h3>
-            <pre>{JSON.stringify(socialData, null, 2)}</pre>
-          </div>
         </AppWrapper>
       )}
     </ThemeProvider>
