@@ -40,12 +40,12 @@ const ToggleButton = styled.div`
 
   @media (max-width: 768px) {
     margin-top: 60px;
-    left: 280px;
+    left: 270px;
   }
 
   @media (max-width: 360px) {
     margin-top: 60px;
-    left: 260px;
+    left: 265px;
   }
 `;
 
@@ -77,6 +77,7 @@ const Header = styled.div`
 
   @media (max-width: 360px) {
     font-size: 13px;
+    left: 0px;
   }
 `;
 
@@ -97,9 +98,9 @@ const Paragraph = styled.p`
   }
 
   @media (max-width: 360px) {
-    font-size: 10px;
+    font-size: 13px;
     text-align: left;
-    right: 160px;
+    right: 173px;
   }
 `;
 
@@ -117,6 +118,12 @@ const WelcomeMessage = styled.span`
     font-size: 12px;
     margin-top: 100px;
     left: 50px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 12px;
+    margin-top: 100px;
+    left: 40px;
   }
 `;
 
@@ -147,14 +154,14 @@ const LogoutButton = styled.button`
   @media (max-width: 768px) {
     font-size: 12px;
     margin-top: 10px;
-    left: 260px;
+    left: 250px;
   }
 
   @media (max-width: 360px) {
     font-size: 12px;
     padding: 8px 14px;
-    margin-top: 60px;
-    left: 260px;
+    margin-top: 10px;
+    left: 240px;
   }
 `;
 
